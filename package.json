@@ -2,25 +2,32 @@
    "name": "payment-splitter",
    "version": "0.0.0",
    "description": "Simple payment-splitter backend api, for portfolio purposes :)",
+   "type": "commonjs",
    "main": "index.js",
    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
+      "watch": "tsc -w",
+      "dev": "nodemon build/index.js",
+      "start:dev": "concurrently \"tsc -w\" \"nodemon build/index.js\"",
+      "build": "tsc",
       "start": "ts-node src/index.ts",
-      "typeorm": "typeorm-ts-node-commonjs"
+      "typeorm": "typeorm-ts-node-commonjs",
+      "migration": " npm run typeorm migration:run -- -d ./src/data-source.ts"
    },
    "keywords": [],
    "author": "",
    "license": "ISC",
    "dependencies": {
       "@types/express": "^5.0.0",
+      "concurrently": "^9.1.2",
+      "dotenv": "^16.4.7",
       "express": "^4.21.2",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.13",
       "typeorm": "0.3.20"
    },
    "devDependencies": {
-      "@types/node": "^16.11.10",
+      "@types/node": "^16.18.125",
       "ts-node": "10.9.1",
-      "typescript": "4.5.2"
+      "typescript": "^4.5.2"
    }
 }
