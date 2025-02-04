@@ -1,18 +1,21 @@
-import { AppDataSource } from "./data-source"
-import { User } from "./entity/User.entity"
+import { AppDataSource } from "./data-source";
+import * as express from "express";
+import { Request, Response } from "express";
+import { User } from "./entity/User.entity";
+import { userRouter } from "./routes/user.routes";
+
+const app = express();
+app.use(express.json());
+const {PORT = 3000} = process.env;
+app.use("/users", userRouter);
+
+app.get("*",(req: Request, res: Response) => {
+    res.status(505).json({ message: "Bad Request"});
+});
 
 AppDataSource.initialize().then(async () => {
-
-    console.log("Inserting a new user into the database...")
-    const user = new User()
-    user.name = "Cleber"
-    await AppDataSource.manager.save(user)
-    console.log("Saved a new user with id: " + user.id)
-
-    console.log("Loading users from the database...")
-    const users = await AppDataSource.manager.find(User)
-    console.log("Loaded users: ", users)
-
-    console.log("Here you can setup and run express / fastify / any other framework.")
-
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+    console.log("Data source initialized.");
 }).catch(error => console.log(error))
