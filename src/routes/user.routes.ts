@@ -1,8 +1,7 @@
 import * as express from 'express';
+import { UserController } from '../controller/user.controller';
 const Router = express.Router();
 
-Router.get("/", (req, res) => {
-    res.json({ message: "Hello from user routes!" });
-});
+Router.get("/", UserController.getUsers);
 
 export { Router as userRouter };
