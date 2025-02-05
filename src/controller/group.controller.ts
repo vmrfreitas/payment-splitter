@@ -57,7 +57,7 @@ export class GroupController {
     }
 
     static async getAllGroups(req: Request, res: Response) {
-        const groups = await GroupRepository.find();
+        const groups = await GroupRepository.find({ relations: ["participants"] });
         res.status(200).json(groups);
     }
 

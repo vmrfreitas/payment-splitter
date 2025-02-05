@@ -1,9 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, JoinColumn, OneToOne } from "typeorm";
 import { User } from "./User.entity";
 import { Group } from "./Group.entity";
+import { CommonEntity } from "./Common.entity";
 
 @Entity()
-export class Expense {
+export class Expense extends CommonEntity {
 
     @PrimaryGeneratedColumn("uuid")
     id: string
