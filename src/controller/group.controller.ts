@@ -16,8 +16,7 @@ export class GroupController {
         group.name = name;
         await GroupRepository.save(group);
    
-        const users = await UserRepository.find({ where: { id: In(userIds) } });
-    
+        const users = await UserRepository.find({ where: { id: In(userIds) } }); // TODO: move this to a service since it is calling another repository
 
         const participants = users.map((user) => {
             const participant = new Participant();
@@ -31,8 +30,39 @@ export class GroupController {
         res.status(201).json({ message: "Group created successfully", group }); 
     }
 
-    static async getGroups(req: Request, res: Response) {
+    static async addParticipants(req: Request, res: Response) { // TODO: move to participant.controller
+        const { userIds } = req.body; // TODO: Validate request body, use jet-validator maybe
+        const groupId = req.params.id;
+        const group = await GroupRepository.findOne({ where: { id: groupId } });
+   
+        const users = await UserRepository.find({ where: { id: In(userIds) } });
+
+        const participants = users.map((user) => {
+            const participant = new Participant();
+            participant.user = user;
+            participant.group = group;
+            participant.balance = 0;
+            return participant;
+        });
+
+        await ParticipantRepository.save(participants);
+        res.status(201).json({ message: "Group created successfully", group }); 
+    }
+
+    static async updateGroupName(req: Request, res: Response) {
+        const group = await GroupRepository.findOneBy({ id: req.params.id });
+        group.name = req.body.name;
+        await GroupRepository.save(group);
+        res.status(200).json({ message: "Group name changed successfully", group });
+    }
+
+    static async getAllGroups(req: Request, res: Response) {
         const groups = await GroupRepository.find();
         res.status(200).json(groups);
+    }
+
+    static async getGroup(req: Request, res: Response) {
+        const group = await GroupRepository.findOneBy({ id: req.params.id });
+        res.status(200).json(group);
     }
 }
