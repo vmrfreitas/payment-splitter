@@ -12,7 +12,7 @@
       "start": "ts-node src/index.ts",
       "typeorm": "typeorm-ts-node-commonjs",
       "migration": " npm run typeorm migration:run -- -d ./src/data-source.ts",
-       "lint": "eslint ."
+      "lint": "eslint ."
    },
    "keywords": [],
    "author": "",

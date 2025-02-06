@@ -26,13 +26,6 @@ export class GroupService {
             return group;
         }
 
-    
-        static async updateGroupName(name: string, groupId: string) {
-            const group = await GroupRepository.findOneBy({ id: groupId });
-            group.name = name;
-            return await GroupRepository.save(group);
-        }
-    
         static async getAllGroups() {
             return await GroupRepository.find({ relations: ["participants"] });
         }
@@ -41,7 +34,13 @@ export class GroupService {
             const group = await GroupRepository.findOne({ relations: ["participants"], where: { id: groupId } });
             return group;
         }
-
+    
+        static async updateGroupName(name: string, groupId: string) {
+            const group = await GroupRepository.findOneBy({ id: groupId });
+            group.name = name;
+            return await GroupRepository.save(group);
+        }
+    
         static async removeGroup(groupId: string) {
             const group = await GroupRepository.findOne({ relations: ["participants"], where: { id: groupId } });
             const participants = group.participants;
