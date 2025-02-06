@@ -3,7 +3,7 @@ import { ExpenseController } from "../controller/expense.controller";
 const router = express.Router();
 
 router.get("/:groupId/expenses", ExpenseController.getAllExpensesFromGroup);
-router.post("/:groupId/expenses", ExpenseController.addExpensesToGroup);
+router.post("/:groupId/expenses", ExpenseController.addOneExpenseToGroup);
 router.delete("/:groupId/expenses/:id", ExpenseController.removeExpenseFromGroup);
 
 export { router as ExpensesRouter };
