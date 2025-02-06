@@ -15,11 +15,9 @@ export class Participant {
   @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
   balance: number;
 
-  // Relationship with User
   @ManyToOne(() => User, (user) => user.participants)
   user: User;
 
-  // Relationship with Group
   @ManyToOne(() => Group, (group) => group.participants)
   group: Group;
 }
