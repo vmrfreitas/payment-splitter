@@ -11,8 +11,6 @@ export class User extends CommonEntity {
     @Column()
     name: string
 
-    @OneToMany(() => Participant, (participant) => participant.user, {
-        cascade: ["soft-remove"]
-    })
+    @OneToMany(() => Participant, (participant) => participant.user)
     participants: Participant[];
 }

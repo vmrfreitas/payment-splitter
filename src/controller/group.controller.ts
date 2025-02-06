@@ -30,25 +30,6 @@ export class GroupController {
         res.status(201).json({ message: "Group created successfully", group }); 
     }
 
-    static async addParticipants(req: Request, res: Response) { // TODO: move to participant.controller
-        const { userIds } = req.body; // TODO: Validate request body, use jet-validator maybe
-        const groupId = req.params.id;
-        const group = await GroupRepository.findOne({ where: { id: groupId } });
-   
-        const users = await UserRepository.find({ where: { id: In(userIds) } });
-
-        const participants = users.map((user) => {
-            const participant = new Participant();
-            participant.user = user;
-            participant.group = group;
-            participant.balance = 0;
-            return participant;
-        });
-
-        await ParticipantRepository.save(participants);
-        res.status(201).json({ message: "Group created successfully", group }); 
-    }
-
     static async updateGroupName(req: Request, res: Response) {
         const group = await GroupRepository.findOneBy({ id: req.params.id });
         group.name = req.body.name;

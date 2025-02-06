@@ -1,19 +1,21 @@
 import { Request, Response } from 'express';
 import { ParticipantRepository } from '../repositories/participant.repository';
+import { GroupRepository } from '../repositories/group.repository';
+import { ParticipantService } from '../service/participant.service';
 
 export class ParticipantController { 
     static async getAllParticipants(req: Request, res: Response) {
-        const groupId = req.params.id;
-        const Participants = await ParticipantRepository.findBy({ groupId: groupId });
+        const Participants = await ParticipantService.findParticipants(req.params.groupId);
         res.status(200).json(Participants);
     }
 
-    static async addParticipants(req: Request, res: Response) { // TODO: remove
-        const Participants = await ParticipantRepository.find();
-        res.status(200).json(Participants);
+    static async addParticipants(req: Request, res: Response) {
+        const participants = await ParticipantService.addParticipants(req.params.groupId, req.body.userIds);         
+        res.status(201).json({ message: "Participants added successfully", participants }); 
     }
-    static async removeParticipant(req: Request, res: Response) { // TODO: remove
-        const Participants = await ParticipantRepository.find();
-        res.status(200).json(Participants);
+
+    static async removeParticipant(req: Request, res: Response) {
+        ParticipantService.removeParticipant(req.params.groupId, req.params.userId);
+        res.status(200).json({ message: "Participant removed successfully" });
     }
 }

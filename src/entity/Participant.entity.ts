@@ -5,7 +5,7 @@ import { Group } from "./Group.entity";
 import { CommonEntity } from "./Common.entity";
 
 @Entity()
-export class Participant extends CommonEntity {
+export class Participant {
   @PrimaryColumn()
   userId: string;
 

@@ -12,9 +12,7 @@ export class Group extends CommonEntity {
     @Column()
     name: string
 
-    @OneToMany(() => Participant, (participant) => participant.group, {
-        cascade: ["soft-remove"]
-    })
+    @OneToMany(() => Participant, (participant) => participant.group)
     participants: Participant[];
 
 }
