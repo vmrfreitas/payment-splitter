@@ -1,4 +1,4 @@
-import { CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm"
+import { CreateDateColumn, UpdateDateColumn } from "typeorm"
 
 export class CommonEntity {
 

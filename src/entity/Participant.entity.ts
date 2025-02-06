@@ -2,7 +2,6 @@
 import { Entity, PrimaryColumn, Column, ManyToOne } from "typeorm";
 import { User } from "./User.entity";
 import { Group } from "./Group.entity";
-import { CommonEntity } from "./Common.entity";
 
 @Entity()
 export class Participant {

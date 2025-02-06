@@ -1,11 +1,9 @@
-import { AppDataSource } from "../data-source";
 import { Participant } from "../entity/Participant.entity";
 import { User } from "../entity/User.entity";
 import { Group } from "../entity/Group.entity";
 import { In } from "typeorm";
 import { GroupRepository } from "../repositories/group.repository";
 import { UserRepository } from "../repositories/user.repository";
-import { group } from "console";
 import { ParticipantRepository } from "../repositories/participant.repository";
 
 export class ParticipantService {

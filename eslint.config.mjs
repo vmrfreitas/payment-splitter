@@ -5,5 +5,8 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   eslint.configs.recommended,
+  {
+    ignores: ["build", "node_modules", ".vscode" ]
+  },
   ...tseslint.configs.recommended,
 );

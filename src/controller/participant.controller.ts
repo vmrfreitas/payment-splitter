@@ -1,6 +1,4 @@
 import { Request, Response } from 'express';
-import { ParticipantRepository } from '../repositories/participant.repository';
-import { GroupRepository } from '../repositories/group.repository';
 import { ParticipantService } from '../service/participant.service';
 
 export class ParticipantController { 
