@@ -6,4 +6,4 @@ router.get("/:groupId/expenses", ExpenseController.getAllExpensesFromGroup);
 router.post("/:groupId/expenses", ExpenseController.addOneExpenseToGroup);
 router.delete("/:groupId/expenses/:id", ExpenseController.removeExpenseFromGroup);
 
-export { router as ExpensesRouter };
+export { router as expenseRouter };

@@ -8,8 +8,8 @@ export class ExpenseController {
     }
 
     static async addOneExpenseToGroup(req: Request, res: Response) {
-        const { description, amount, payerId, payeesIds } = req.body; 
-        const expenses = await ExpenseService.addOneExpenseToGroup(req.params.groupId, description, amount, payerId, payeesIds);         
+        const { description, amount, payerId, payeeIds } = req.body; 
+        const expenses = await ExpenseService.addOneExpenseToGroup(req.params.groupId, description, amount, payerId, payeeIds);         
         res.status(201).json({ message: "Expenses added successfully", expenses }); 
     }
 

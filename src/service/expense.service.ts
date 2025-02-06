@@ -9,14 +9,15 @@ import { Participant } from "../entity/Participant.entity";
 import { ParticipantRepository } from "../repositories/participant.repository";
 
 export class ExpenseService {
-    static async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeesId: string): Promise<Expense> {        
+    static async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeeIds: string): Promise<Expense> {        
         
         const group = await GroupRepository.findOne({ relations: ["expenses", "participants"], where: { id: groupId } });
         const groupParticipants = group.participants;
         const payer = groupParticipants.find((participant) => participant.userId === payerId);
-        const payees = groupParticipants.filter((participant) => payeesId.includes(participant.userId));
+        const payees = groupParticipants.filter((participant) => payeeIds.includes(participant.userId));
         const payerShare = 1;
-        const dividedAmount = amount/(payees.length + payerShare);
+        const dividedAmount: number = Math.floor(amount/(payees.length + payerShare)*100)/100;
+        const remainder = amount - dividedAmount * (payees.length + payerShare);
 
         const expense = this.buildExpense(group, payer, payees, description, amount);
 
@@ -27,9 +28,9 @@ export class ExpenseService {
         }
 
         for (const payee of payees ){
-            payee.balance -= dividedAmount;
+            payee.balance = +payee.balance - dividedAmount;
         }
-        payer.balance += dividedAmount;
+        payer.balance = +payer.balance + amount - (dividedAmount + remainder); // remainder always goes to the payer
 
         await GroupRepository.save(group);
         await ParticipantRepository.save(payees.concat(payer));
