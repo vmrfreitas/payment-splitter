@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, JoinColumn, OneToOne, ManyToOne } from "typeorm";
-import { User } from "./User.entity";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne } from "typeorm";
 import { Group } from "./Group.entity";
 import { CommonEntity } from "./Common.entity";
 import { Participant } from "./Participant.entity";
@@ -11,9 +10,9 @@ export class Expense extends CommonEntity {
     id: string
 
     @Column()
-    name: string
+    description: string
 
-    @Column()
+    @Column({ type: "decimal", precision: 10, scale: 2 })
     amount: number
 
     @ManyToOne(() => Participant, (participant) => participant.payments)

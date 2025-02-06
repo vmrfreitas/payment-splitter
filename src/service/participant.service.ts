@@ -7,7 +7,7 @@ import { UserRepository } from "../repositories/user.repository";
 import { ParticipantRepository } from "../repositories/participant.repository";
 
 export class ParticipantService {
-    static async addParticipants(groupId: string, userIds: string[]): Promise<Participant[]> {
+    static async addParticipantsToGroup(groupId: string, userIds: string[]): Promise<Participant[]> {
 
         const group = await GroupRepository.findOne({ relations: ["participants"], where: { id: groupId } });
         const users = await UserRepository.find({ where: { id: In(userIds) } });
@@ -29,11 +29,11 @@ export class ParticipantService {
         return participants;
     }
 
-    static async findParticipants(groupId: string): Promise<Participant[]> {
+    static async getAllParticipantsInGroup(groupId: string): Promise<Participant[]> {
         return await ParticipantRepository.findBy({ groupId: groupId });
     }
 
-    static async removeParticipant(groupId: string, userId: string) {
+    static async removeParticipantFromGroup(groupId: string, userId: string) {
         const participant = await ParticipantRepository.findOne({ where: { userId, groupId } });
         await ParticipantRepository.remove(participant);
     }

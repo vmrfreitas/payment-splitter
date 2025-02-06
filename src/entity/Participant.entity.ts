@@ -6,10 +6,10 @@ import { Expense } from "./Expense.entity";
 
 @Entity()
 export class Participant {
-  @PrimaryColumn()
+  @PrimaryColumn("uuid")
   userId: string;
 
-  @PrimaryColumn()
+  @PrimaryColumn("uuid")
   groupId: string;
 
   @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
