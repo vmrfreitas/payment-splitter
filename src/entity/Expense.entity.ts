@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, JoinColumn, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, JoinColumn, OneToOne, ManyToOne } from "typeorm";
 import { User } from "./User.entity";
 import { Group } from "./Group.entity";
 import { CommonEntity } from "./Common.entity";
+import { Participant } from "./Participant.entity";
 
 @Entity()
 export class Expense extends CommonEntity {
@@ -15,16 +16,14 @@ export class Expense extends CommonEntity {
     @Column()
     amount: number
 
-    @OneToOne(() => User)
-    @JoinColumn()
-    payer: User
+    @ManyToOne(() => Participant, (participant) => participant.payments)
+    payer: Participant
 
-    @OneToOne(() => Group)
-    @JoinColumn()
-    group: Group
+    @ManyToOne(() => Group, (group) => group.expenses)
+    group: Group;
     
-    @ManyToMany(() => User)
+    @ManyToMany(() => Participant)
     @JoinTable()
-    participants: User[]
+    payees: Participant[]
     
 }
