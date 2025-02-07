@@ -26,4 +26,9 @@ export class GroupController {
         await GroupService.removeGroup(req.params.id);
         res.status(200).json({ message: "Group deleted successfully" });
     }
+
+    static async getTransactionHistory(req: Request, res: Response) {
+        const transactions = await GroupService.getTransactionHistory(req.params.id);
+        res.status(200).json(transactions);
+    }
 }
