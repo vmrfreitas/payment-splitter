@@ -47,8 +47,12 @@ export class GroupService {
         }
     
         static async removeGroup(groupId: string) {
-            const group = await GroupRepository.findOne({ relations: ["participants"], where: { id: groupId } });
+            const group = await GroupRepository.findOne({ relations: ["participants", "expenses", "settlements"], where: { id: groupId } });
             const participants = group.participants;
+            const expenses = group.expenses;
+            const settlements = group.settlements;
+            await ExpenseRepository.remove(expenses);
+            await SettlementRepository.remove(settlements);
             await ParticipantRepository.remove(participants);
             await GroupRepository.remove(group);
         }
