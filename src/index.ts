@@ -5,6 +5,7 @@ import { userRouter } from "./routes/user.routes";
 import { groupRouter } from "./routes/group.routes";
 import { participantRouter } from "./routes/participant.routes";
 import { expenseRouter } from "./routes/expense.routes";
+import { settlementRouter } from "./routes/settlement.routes";
 
 const app = express();
 app.use(express.json());
@@ -13,6 +14,7 @@ app.use("/users", userRouter);
 app.use("/groups", groupRouter);
 app.use("/groups", participantRouter);
 app.use("/groups", expenseRouter);
+app.use("/groups", settlementRouter);
 
 app.get("*",(req: Request, res: Response) => {
     res.status(505).json({ message: "Bad Request"});

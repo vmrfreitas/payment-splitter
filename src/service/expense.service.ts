@@ -1,25 +1,22 @@
 import { Expense } from "../entity/Expense.entity";
-import { User } from "../entity/User.entity";
 import { Group } from "../entity/Group.entity";
-import { In } from "typeorm";
 import { GroupRepository } from "../repositories/group.repository";
-import { UserRepository } from "../repositories/user.repository";
 import { ExpenseRepository } from "../repositories/expense.repository";
 import { Participant } from "../entity/Participant.entity";
 import { ParticipantRepository } from "../repositories/participant.repository";
 
 export class ExpenseService {
-    static async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeeIds: string): Promise<Expense> {        
+    static async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeeIds: string[]): Promise<Expense> {        
         
         const group = await GroupRepository.findOne({ relations: ["expenses", "participants"], where: { id: groupId } });
         const groupParticipants = group.participants;
         const payer = groupParticipants.find((participant) => participant.userId === payerId);
         const payees = groupParticipants.filter((participant) => payeeIds.includes(participant.userId));
         const payerShare = 1;
-        const dividedAmount: number = Math.floor(amount/(payees.length + payerShare)*100)/100;
-        const remainder = amount - dividedAmount * (payees.length + payerShare);
+        const dividedAmount: number = Math.floor(+amount/(payees.length + payerShare)*100)/100;
+        const remainder = +amount - dividedAmount * (payees.length + payerShare);
 
-        const expense = this.buildExpense(group, payer, payees, description, amount);
+        const expense = this.buildExpense(group, payer, payees, description, +amount);
 
         if (group.expenses) {
             group.expenses.concat(expense);
@@ -28,9 +25,9 @@ export class ExpenseService {
         }
 
         for (const payee of payees ){
-            payee.balance = +payee.balance - dividedAmount;
+            payee.balance = Math.round((+payee.balance - dividedAmount)*100)/100;
         }
-        payer.balance = +payer.balance + amount - (dividedAmount + remainder); // remainder always goes to the payer
+        payer.balance = Math.round((+payer.balance + +amount - (dividedAmount + remainder))*100)/100; // TODO: document that the remainder always goes to the payer
 
         await GroupRepository.save(group);
         await ParticipantRepository.save(payees.concat(payer));
@@ -38,13 +35,29 @@ export class ExpenseService {
         return expense;
     }
 
-    static async getAllExpensesFromGroup(id: string): Promise<Expense[]> {
-        return Promise.resolve([]);
-
+    static async getAllExpensesFromGroup(groupId: string): Promise<Expense[]> {
+        const group = await GroupRepository.findOne({ relations: ["expenses"], where: { id: groupId } });
+        return group.expenses;
     }
 
     static async removeExpenseFromGroup(groupId: string, id: string) {
-        
+        const expense = await ExpenseRepository.findOne({ relations:["payer", "payees"], where: { id } });
+        const group = await GroupRepository.findOne({ relations: ["expenses"], where: { id: groupId } });
+        group.expenses = group.expenses.filter((expense) => expense.id !== id);
+        const payer = expense.payer;
+        const payees = expense.payees;
+        const payerShare = 1;
+        const dividedAmount: number = Math.floor(expense.amount/(payees.length + payerShare)*100)/100;
+        const remainder = expense.amount - dividedAmount * (payees.length + payerShare);
+
+        for (const payee of payees ){
+            payee.balance = Math.round((+payee.balance + dividedAmount)*100)/100;
+        }
+        payer.balance = Math.round((+payer.balance - +expense.amount + (dividedAmount + remainder))*100)/100;
+
+        await GroupRepository.save(group);
+        await ParticipantRepository.save(payees.concat(payer));
+        await ExpenseRepository.remove(expense);
     }
 
     private static buildExpense(group: Group, payer: Participant, payees: Participant[], description: string, amount: number): Expense {

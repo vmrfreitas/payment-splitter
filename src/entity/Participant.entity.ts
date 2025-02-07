@@ -3,6 +3,7 @@ import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from "typeorm";
 import { User } from "./User.entity";
 import { Group } from "./Group.entity";
 import { Expense } from "./Expense.entity";
+import { Settlement } from "./Settlement.entity";
 
 @Entity()
 export class Participant {
@@ -23,4 +24,10 @@ export class Participant {
 
   @ManyToOne(() => Group, (group) => group.participants)
   group: Group;
+
+  @OneToMany(() => Settlement, (settlement) => settlement.payer)
+  settlementsPaid: Settlement[];
+
+  @OneToMany(() => Settlement, (settlement) => settlement.payee)
+  settlementsReceived: Settlement[];
 }
