@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.get("/:groupId/expenses", ExpenseController.getAllExpensesFromGroup);
 router.post("/:groupId/expenses", ExpenseController.addOneExpenseToGroup);
+router.post("/:groupId/expenses/import", ExpenseController.importExpensesFromCSV);
 router.delete("/:groupId/expenses/:id", ExpenseController.removeExpenseFromGroup);
 
 export { router as expenseRouter };

@@ -18,18 +18,11 @@ export class ExpenseService {
 
         const expense = this.buildExpense(group, payer, payees, description, +amount);
 
-        if (group.expenses) {
-            group.expenses.concat(expense);
-        } else {
-            group.expenses = [expense];
-        }
-
         for (const payee of payees ){
             payee.balance = Math.round((+payee.balance - dividedAmount)*100)/100;
         }
         payer.balance = Math.round((+payer.balance + +amount - (dividedAmount + remainder))*100)/100; // TODO: document that the remainder always goes to the payer
 
-        await GroupRepository.save(group);
         await ParticipantRepository.save(payees.concat(payer));
         await ExpenseRepository.save(expense);
         return expense;
@@ -42,8 +35,6 @@ export class ExpenseService {
 
     static async removeExpenseFromGroup(groupId: string, id: string) {
         const expense = await ExpenseRepository.findOne({ relations:["payer", "payees"], where: { id } });
-        const group = await GroupRepository.findOne({ relations: ["expenses"], where: { id: groupId } });
-        group.expenses = group.expenses.filter((expense) => expense.id !== id);
         const payer = expense.payer;
         const payees = expense.payees;
         const payerShare = 1;
@@ -55,7 +46,6 @@ export class ExpenseService {
         }
         payer.balance = Math.round((+payer.balance - +expense.amount + (dividedAmount + remainder))*100)/100;
 
-        await GroupRepository.save(group);
         await ParticipantRepository.save(payees.concat(payer));
         await ExpenseRepository.remove(expense);
     }

@@ -14,16 +14,9 @@ export class SettlementService {
 
         const settlement = this.buildSettlement(group, payer, payee, amount);
 
-        if (group.settlements) {
-            group.settlements.concat(settlement);
-        } else {
-            group.settlements = [settlement];
-        }
-
         payee.balance = Math.round((+payee.balance - +amount)*100)/100;
         payer.balance = Math.round((+payer.balance + +amount)*100)/100;
 
-        await GroupRepository.save(group);
         await ParticipantRepository.save([payee, payer]);
         await SettlementRepository.save(settlement);
         return settlement;
@@ -36,15 +29,12 @@ export class SettlementService {
 
     static async removeSettlementFromGroup(groupId: string, id: string) {
         const settlement = await SettlementRepository.findOne({ relations:["payer", "payee"], where: { id } });
-        const group = await GroupRepository.findOne({ relations: ["settlements"], where: { id: groupId } });
-        group.settlements = group.settlements.filter((settlement) => settlement.id !== id);
         const payer = settlement.payer;
         const payee = settlement.payee;
 
         payee.balance =  Math.round((+payee.balance + +settlement.amount)*100)/100;
         payer.balance = Math.round((+payer.balance - +settlement.amount)*100)/100;
 
-        await GroupRepository.save(group);
         await ParticipantRepository.save([payee, payer]);
         await SettlementRepository.remove(settlement);
     }

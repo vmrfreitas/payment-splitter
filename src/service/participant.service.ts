@@ -17,14 +17,7 @@ export class ParticipantService {
         }
 
         const participants = this.buildParticipants(users, group);
-
-        if (group.participants) {
-            group.participants.concat(participants);
-        } else {
-            group.participants = participants;
-        }
-
-        await GroupRepository.save(group);
+ 
         await ParticipantRepository.save(participants);
         return participants;
     }
