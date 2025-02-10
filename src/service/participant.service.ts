@@ -8,11 +8,11 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class ParticipantService {
-    constructor(private userRepository: UserRepository, private participantRepository: ParticipantRepository) {}
+    constructor(private userRepository: UserRepository, private participantRepository: ParticipantRepository, private groupRepository: GroupRepository) {}
 
     async addParticipantsToGroup(groupId: string, userIds: string[]): Promise<Participant[]> {
 
-        const group = await GroupRepository.findOne({ relations: ["participants"], where: { id: groupId } });
+        const group = await this.groupRepository.findByIdWithParticipants(groupId);
         const users = await this.userRepository.findByIds(userIds);
 
         if (!group || users.length !== userIds.length) {

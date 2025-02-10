@@ -10,10 +10,15 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class SettlementService {
-    constructor(private userRepository: UserRepository, private emailService: EmailService, private settlementRepository: SettlementRepository, private participantRepository: ParticipantRepository) {}
+    constructor(
+        private userRepository: UserRepository, 
+        private emailService: EmailService, 
+        private settlementRepository: SettlementRepository, 
+        private participantRepository: ParticipantRepository,
+        private groupRepository: GroupRepository) {}
 
     async addOneSettlementToGroup(groupId: string, amount: number, payerId: string, payeeId: string): Promise<Settlement> {
-        const group = await GroupRepository.findOne({ relations: ["settlements", "participants"], where: { id: groupId } });
+        const group = await this.groupRepository.findByIdWithParticipantsAndSettlements(groupId);
         const groupParticipants = group.participants;
         const payer = groupParticipants.find((participant) => participant.userId === payerId);
         const payee = groupParticipants.find((participant) => payeeId === participant.userId);
@@ -32,7 +37,7 @@ export class SettlementService {
     }
 
     async getAllSettlementsFromGroup(groupId: string): Promise<Settlement[]> {
-        const group = await GroupRepository.findOne({ relations: ["settlements"], where: { id: groupId } });
+        const group = await this.groupRepository.findByIdWithSettlements(groupId);
         return group.settlements;
     }
 

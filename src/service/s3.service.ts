@@ -18,10 +18,10 @@ const s3Client = new S3Client({
 
 @injectable()
 export class S3Service {
-    constructor(private participantRepository: ParticipantRepository, private expenseRepository: ExpenseRepository) { }
+    constructor(private participantRepository: ParticipantRepository, private expenseRepository: ExpenseRepository, private groupRepository: GroupRepository) { }
 
     async getExpensesFromCSV(key: string, groupId: string): Promise<Expense[]> {
-        const group = await GroupRepository.findOne({ relations: ["participants", "expenses"], where: { id: groupId } });
+        const group = await this.groupRepository.findByIdWithExpensesAndParticipants(groupId);
         const groupParticipants = group.participants;
 
         try {

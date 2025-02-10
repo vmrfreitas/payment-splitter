@@ -21,12 +21,20 @@ export class GroupRepository {
         return await this.repository.findOne({ relations: ["participants", "expenses", "settlements"], where: { id } });
     }
 
+    async findByIdWithParticipantsAndSettlements(id: string): Promise<Group | null> {
+        return await this.repository.findOne({ relations: ["participants", "settlements"], where: { id } });
+    }
+
     async findByIdWithExpensesAndParticipants(id: string): Promise<Group | null> { 
         return await this.repository.findOne({ relations: ["expenses", "participants"], where: { id } });
     }
 
     async findByIdWithParticipants(id: string): Promise<Group | null> {
         return await this.repository.findOne({ relations: ["participants"], where: { id } })
+    }
+
+    async findByIdWithSettlements(id: string): Promise<Group | null> {
+        return await this.repository.findOne({ relations: ["settlements"], where: { id } })
     }
     
     async findByIdWithExpenses(id: string): Promise<Group | null> { 
