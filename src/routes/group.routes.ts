@@ -1,12 +1,15 @@
 import * as express from 'express';
 import { GroupController } from '../controller/group.controller';
-const Router = express.Router();
+import { container } from 'tsyringe';
 
-Router.get("/", GroupController.getAllGroups);
-Router.get("/:id", GroupController.getGroup);
-Router.delete("/:id", GroupController.removeGroup);
-Router.patch("/:id", GroupController.updateGroupName);
-Router.post("/", GroupController.createGroup);
-Router.get("/:id/transactions", GroupController.getTransactionHistory);
+const Router = express.Router();
+const groupController = container.resolve(GroupController);
+
+Router.get("/", groupController.getAllGroups.bind(groupController));
+Router.get("/:id", groupController.getGroup.bind(groupController));
+Router.delete("/:id", groupController.removeGroup.bind(groupController));
+Router.patch("/:id", groupController.updateGroupName.bind(groupController));
+Router.post("/", groupController.createGroup.bind(groupController));
+Router.get("/:id/transactions", groupController.getTransactionHistory.bind(groupController));
 
 export { Router as groupRouter };

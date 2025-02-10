@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import "reflect-metadata";
+import "./container";
 import * as express from "express";
 import { Request, Response } from "express";
 import { userRouter } from "./routes/user.routes";

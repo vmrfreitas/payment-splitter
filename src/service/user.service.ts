@@ -6,26 +6,28 @@ import { injectable } from "tsyringe";
 @injectable()
 export class UserService {
 
+    constructor(private userRepository: UserRepository) {}
+
     async createUser(name: string, email: string) {
         const user = new User();
         user.name = name;
         user.email = email;
-        return await UserRepository.save(user);
+        return await this.userRepository.save(user);
     }
 
     async getAllUsers() {
-        return await UserRepository.find();
+        return await this.userRepository.findAll();
     }
 
     async getUser(userId: string) {
-        return await UserRepository.findOne({ relations: ["participants"], where: { id: userId } });
+        return await this.userRepository.findByIdWithParticipants(userId);
     }
 
     async deleteUser(userId: string) {
-        const user = await UserRepository.findOne({ relations: ["participants"], where: { id: userId } });
+        const user = await this.userRepository.findByIdWithParticipants(userId);
         const participants = user.participants;
         await ParticipantRepository.remove(participants);
-        await UserRepository.remove(user);
+        await this.userRepository.remove(user);
     }   
 
 }

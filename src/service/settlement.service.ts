@@ -6,9 +6,13 @@ import { Participant } from "../entity/Participant.entity";
 import { ParticipantRepository } from "../repositories/participant.repository";
 import { EmailService } from "./email.service";
 import { UserRepository } from "../repositories/user.repository";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class SettlementService {
-    static async addOneSettlementToGroup(groupId: string, amount: number, payerId: string, payeeId: string): Promise<Settlement> {
+    constructor(private userRepository: UserRepository, private emailService: EmailService) {}
+
+    async addOneSettlementToGroup(groupId: string, amount: number, payerId: string, payeeId: string): Promise<Settlement> {
         const group = await GroupRepository.findOne({ relations: ["settlements", "participants"], where: { id: groupId } });
         const groupParticipants = group.participants;
         const payer = groupParticipants.find((participant) => participant.userId === payerId);
@@ -19,20 +23,20 @@ export class SettlementService {
         payee.balance = Math.round((+payee.balance - +amount)*100)/100;
         payer.balance = Math.round((+payer.balance + +amount)*100)/100;
 
-        const payerUser = await UserRepository.findOne({ where: {id: payerId} });
-        const payeeUser = await UserRepository.findOne({ where: {id: payeeId} });
-        await EmailService.sendSettlementNotification(payerUser, payeeUser, amount, group.name);
+        const payerUser = await this.userRepository.findById(payerId);
+        const payeeUser = await this.userRepository.findById(payeeId);
+        await this.emailService.sendSettlementNotification(payerUser, payeeUser, amount, group.name);
         await ParticipantRepository.save([payee, payer]);
         await SettlementRepository.save(settlement);
         return settlement;
     }
 
-    static async getAllSettlementsFromGroup(groupId: string): Promise<Settlement[]> {
+    async getAllSettlementsFromGroup(groupId: string): Promise<Settlement[]> {
         const group = await GroupRepository.findOne({ relations: ["settlements"], where: { id: groupId } });
         return group.settlements;
     }
 
-    static async removeSettlementFromGroup(groupId: string, id: string) {
+    async removeSettlementFromGroup(groupId: string, id: string) {
         const settlement = await SettlementRepository.findOne({ relations:["payer", "payee"], where: { id } });
         const payer = settlement.payer;
         const payee = settlement.payee;
@@ -44,7 +48,7 @@ export class SettlementService {
         await SettlementRepository.remove(settlement);
     }
 
-    private static buildSettlement(group: Group, payer: Participant, payee: Participant, amount: number): Settlement {
+    private buildSettlement(group: Group, payer: Participant, payee: Participant, amount: number): Settlement {
         const settlement = new Settlement();
         settlement.amount = amount;
         settlement.payer = payer;

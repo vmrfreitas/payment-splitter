@@ -6,10 +6,13 @@ import { Participant } from "../entity/Participant.entity";
 import { ParticipantRepository } from "../repositories/participant.repository";
 import { EmailService } from "./email.service";
 import { UserRepository } from "../repositories/user.repository";
-import { In } from "typeorm";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class ExpenseService {
-    static async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeeIds: string[]): Promise<Expense> {        
+    constructor(private userRepository: UserRepository, private emailService: EmailService) {}
+
+    async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeeIds: string[]): Promise<Expense> {        
         
         const group = await GroupRepository.findOne({ relations: ["expenses", "participants"], where: { id: groupId } });
         const groupParticipants = group.participants;
@@ -26,20 +29,20 @@ export class ExpenseService {
         }
         payer.balance = Math.round((+payer.balance + owedToPayer)*100)/100; // TODO: document that the remainder always goes to the payer
 
-        const payerUser = await UserRepository.findOne({ where: {id: payerId} });
-        const payeeUsers = await UserRepository.find({ where: { id: In(payeeIds) } });
-        await EmailService.sendExpenseNotification(payerUser, payeeUsers, expense, dividedAmount + remainder, dividedAmount);
+        const payerUser = await this.userRepository.findById(payerId);
+        const payeeUsers = await this.userRepository.findByIds(payeeIds);
+        await this.emailService.sendExpenseNotification(payerUser, payeeUsers, expense, dividedAmount + remainder, dividedAmount);
         await ParticipantRepository.save(payees.concat(payer));
         await ExpenseRepository.save(expense);
         return expense;
     }
 
-    static async getAllExpensesFromGroup(groupId: string): Promise<Expense[]> {
+    async getAllExpensesFromGroup(groupId: string): Promise<Expense[]> {
         const group = await GroupRepository.findOne({ relations: ["expenses"], where: { id: groupId } });
         return group.expenses;
     }
 
-    static async removeExpenseFromGroup(groupId: string, id: string) {
+    async removeExpenseFromGroup(groupId: string, id: string) {
         const expense = await ExpenseRepository.findOne({ relations:["payer", "payees"], where: { id } });
         const payer = expense.payer;
         const payees = expense.payees;
@@ -56,7 +59,7 @@ export class ExpenseService {
         await ExpenseRepository.remove(expense);
     }
 
-    private static buildExpense(group: Group, payer: Participant, payees: Participant[], description: string, amount: number): Expense {
+    private buildExpense(group: Group, payer: Participant, payees: Participant[], description: string, amount: number): Expense {
         const expense = new Expense();
         expense.description = description;
         expense.amount = amount;

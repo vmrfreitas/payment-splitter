@@ -1,9 +1,12 @@
 import * as express from 'express';
 import { SettlementController } from "../controller/settlement.controller";
+import { container } from 'tsyringe';
 const router = express.Router();
 
-router.get("/:groupId/settlements", SettlementController.getAllSettlementsFromGroup);
-router.post("/:groupId/settlements", SettlementController.addOneSettlementToGroup);
-router.delete("/:groupId/settlements/:id", SettlementController.removeSettlementFromGroup);
+const settlementController = container.resolve(SettlementController);
+
+router.get("/:groupId/settlements", settlementController.getAllSettlementsFromGroup.bind(settlementController));
+router.post("/:groupId/settlements", settlementController.addOneSettlementToGroup.bind(settlementController));
+router.delete("/:groupId/settlements/:id", settlementController.removeSettlementFromGroup.bind(settlementController));
 
 export { router as settlementRouter };

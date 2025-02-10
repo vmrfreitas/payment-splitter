@@ -1,7 +1,7 @@
-// src/services/email.service.ts
 import { User } from "../entity/User.entity";
 import { Expense } from "../entity/Expense.entity";
 import * as nodemailer from "nodemailer";
+import { injectable } from "tsyringe";
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -11,8 +11,9 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+@injectable()
 export class EmailService {
-    static async sendEmail(to: string, subject: string, html: string) {
+    async sendEmail(to: string, subject: string, html: string) {
         try {
             await transporter.sendMail({
                 from: `Payment Splitter App <paymentsplitterapp@gmail.com>`,
@@ -26,7 +27,7 @@ export class EmailService {
         }
     }
 
-    static async sendExpenseNotification(
+    async sendExpenseNotification(
         payer: User,
         payees: User[],
         expense: Expense,
@@ -45,7 +46,7 @@ export class EmailService {
         }
     }
 
-    static async sendSettlementNotification(
+    async sendSettlementNotification(
         payer: User,
         payee: User,
         amount: number,

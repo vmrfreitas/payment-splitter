@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { UserService } from '../service/user.service';
-import {injectable} from "tsyringe";
+import { injectable } from "tsyringe";
 
 @injectable()
 export class UserController {
