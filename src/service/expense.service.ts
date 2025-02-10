@@ -10,7 +10,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class ExpenseService {
-    constructor(private userRepository: UserRepository, private emailService: EmailService) {}
+    constructor(private userRepository: UserRepository, private emailService: EmailService, private participantRepository: ParticipantRepository) {}
 
     async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeeIds: string[]): Promise<Expense> {        
         
@@ -32,7 +32,7 @@ export class ExpenseService {
         const payerUser = await this.userRepository.findById(payerId);
         const payeeUsers = await this.userRepository.findByIds(payeeIds);
         await this.emailService.sendExpenseNotification(payerUser, payeeUsers, expense, dividedAmount + remainder, dividedAmount);
-        await ParticipantRepository.save(payees.concat(payer));
+        await this.participantRepository.saveMany(payees.concat(payer));
         await ExpenseRepository.save(expense);
         return expense;
     }
@@ -55,7 +55,7 @@ export class ExpenseService {
         }
         payer.balance = Math.round((+payer.balance - +expense.amount + (dividedAmount + remainder))*100)/100;
 
-        await ParticipantRepository.save(payees.concat(payer));
+        await this.participantRepository.saveMany(payees.concat(payer));
         await ExpenseRepository.remove(expense);
     }
 

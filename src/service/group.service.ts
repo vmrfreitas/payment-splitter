@@ -12,7 +12,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class GroupService {
-    constructor(private userRepository: UserRepository, private settlementRepository: SettlementRepository) { }
+    constructor(private userRepository: UserRepository, private settlementRepository: SettlementRepository, private participantRepository: ParticipantRepository) { }
 
     async createGroup(name: string, userIds: string[]) {
         const group = new Group()
@@ -29,7 +29,7 @@ export class GroupService {
             return participant;
         });
 
-        await ParticipantRepository.save(participants);
+        await this.participantRepository.saveMany(participants);
         return group;
     }
 
@@ -55,7 +55,7 @@ export class GroupService {
         const settlements = group.settlements;
         await ExpenseRepository.remove(expenses);
         await this.settlementRepository.removeMany(settlements);
-        await ParticipantRepository.remove(participants);
+        await this.participantRepository.removeMany(participants);
         await GroupRepository.remove(group);
     }
 

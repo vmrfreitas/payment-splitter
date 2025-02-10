@@ -8,7 +8,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class ParticipantService {
-    constructor(private userRepository: UserRepository) {}
+    constructor(private userRepository: UserRepository, private participantRepository: ParticipantRepository) {}
 
     async addParticipantsToGroup(groupId: string, userIds: string[]): Promise<Participant[]> {
 
@@ -21,17 +21,17 @@ export class ParticipantService {
 
         const participants = this.buildParticipants(users, group);
  
-        await ParticipantRepository.save(participants);
+        await this.participantRepository.saveMany(participants);
         return participants;
     }
 
     async getAllParticipantsInGroup(groupId: string): Promise<Participant[]> {
-        return await ParticipantRepository.findBy({ groupId: groupId });
+        return await this.participantRepository.findByGroupId(groupId);
     }
 
     async removeParticipantFromGroup(groupId: string, userId: string) {
-        const participant = await ParticipantRepository.findOne({ where: { userId, groupId } });
-        await ParticipantRepository.remove(participant);
+        const participant = await this.participantRepository.findOneByUserIdAndGroupId(userId, groupId);
+        await this.participantRepository.removeSingle(participant);
     }
 
     private buildParticipants(users: User[], group: Group): Participant[] {

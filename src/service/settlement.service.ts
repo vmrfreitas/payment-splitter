@@ -10,7 +10,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class SettlementService {
-    constructor(private userRepository: UserRepository, private emailService: EmailService, private settlementRepository: SettlementRepository) {}
+    constructor(private userRepository: UserRepository, private emailService: EmailService, private settlementRepository: SettlementRepository, private participantRepository: ParticipantRepository) {}
 
     async addOneSettlementToGroup(groupId: string, amount: number, payerId: string, payeeId: string): Promise<Settlement> {
         const group = await GroupRepository.findOne({ relations: ["settlements", "participants"], where: { id: groupId } });
@@ -26,7 +26,7 @@ export class SettlementService {
         const payerUser = await this.userRepository.findById(payerId);
         const payeeUser = await this.userRepository.findById(payeeId);
         await this.emailService.sendSettlementNotification(payerUser, payeeUser, amount, group.name);
-        await ParticipantRepository.save([payee, payer]);
+        await this.participantRepository.saveMany([payee, payer]);
         await this.settlementRepository.save(settlement);
         return settlement;
     }
@@ -44,7 +44,7 @@ export class SettlementService {
         payee.balance =  Math.round((+payee.balance + +settlement.amount)*100)/100;
         payer.balance = Math.round((+payer.balance - +settlement.amount)*100)/100;
 
-        await ParticipantRepository.save([payee, payer]);
+        await this.participantRepository.saveMany([payee, payer]);
         await this.settlementRepository.removeSingle(settlement);
     }
 

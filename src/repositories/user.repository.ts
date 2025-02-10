@@ -25,11 +25,11 @@ export class UserRepository {
         return this.repository.find({ where: { id: In(ids) } })
     }
 
-    async save(user: User): Promise<User> {
+    async saveSingle(user: User): Promise<User> {
         return this.repository.save(user);
     }
 
-    async remove(user: User): Promise<User> {
+    async removeSingle(user: User): Promise<User> {
         return this.repository.remove(user);
     }
 }
