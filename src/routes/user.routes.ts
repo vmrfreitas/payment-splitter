@@ -1,10 +1,13 @@
 import * as express from 'express';
 import { UserController } from '../controller/user.controller';
-const Router = express.Router();
+import { container } from 'tsyringe';
 
-Router.get("/", UserController.getAllUsers);
-Router.post("/", UserController.createUser);
-Router.get("/:id", UserController.getUser);
-Router.delete("/:id", UserController.deleteUser);
+const Router = express.Router();
+const userController = container.resolve(UserController);
+
+Router.get("/", userController.getAllUsers.bind(userController));
+Router.post("/", userController.createUser.bind(userController));
+Router.get("/:id", userController.getUser.bind(userController));
+Router.delete("/:id", userController.deleteUser.bind(userController));
 
 export { Router as userRouter };
