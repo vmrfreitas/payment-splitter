@@ -5,7 +5,7 @@ import { injectable } from 'tsyringe';
 
 @injectable()
 export class ExpenseController { 
-    constructor(private expenseService: ExpenseService) {}
+    constructor(private expenseService: ExpenseService, private s3Service: S3Service) {}
     
     async getAllExpensesFromGroup(req: Request, res: Response) {
         const expenses = await this.expenseService.getAllExpensesFromGroup(req.params.groupId);
@@ -16,7 +16,7 @@ export class ExpenseController {
         try {
           const { key } = req.body;
         
-          const expenses = await S3Service.getExpensesFromCSV(key, req.params.groupId);
+          const expenses = await this.s3Service.getExpensesFromCSV(key, req.params.groupId);
                     
           res.status(200).json({ message: "Expenses imported successfully", expenses });
         } catch (error) {

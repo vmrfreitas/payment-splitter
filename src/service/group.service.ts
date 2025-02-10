@@ -12,7 +12,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class GroupService {
-    constructor(private userRepository: UserRepository) { }
+    constructor(private userRepository: UserRepository, private settlementRepository: SettlementRepository) { }
 
     async createGroup(name: string, userIds: string[]) {
         const group = new Group()
@@ -54,7 +54,7 @@ export class GroupService {
         const expenses = group.expenses;
         const settlements = group.settlements;
         await ExpenseRepository.remove(expenses);
-        await SettlementRepository.remove(settlements);
+        await this.settlementRepository.removeMany(settlements);
         await ParticipantRepository.remove(participants);
         await GroupRepository.remove(group);
     }
@@ -66,11 +66,7 @@ export class GroupService {
             .where("expense.groupId = :groupId", { groupId })
             .getMany();
 
-        const settlements = await SettlementRepository.createQueryBuilder("settlement")
-            .leftJoinAndSelect("settlement.payer", "payer")
-            .leftJoinAndSelect("settlement.payee", "payee")
-            .where("settlement.groupId = :groupId", { groupId })
-            .getMany();
+        const settlements = await this.settlementRepository.findByGroupIdWithPayerAndPayees(groupId);
         const group = await GroupRepository.findOne({ relations: ["participants"], where: { id: groupId } });
         const users = await this.userRepository.findByIds(group.participants.map((participant) => participant.userId));
         return this.buildTransactions(expenses, settlements, users);

@@ -6,6 +6,7 @@ import { Expense } from "../entity/Expense.entity";
 import { GroupRepository } from "../repositories/group.repository";
 import { ExpenseRepository } from "../repositories/expense.repository";
 import { ParticipantRepository } from "../repositories/participant.repository";
+import { injectable } from "tsyringe";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -15,8 +16,9 @@ const s3Client = new S3Client({
   },
 });
 
+@injectable()
 export class S3Service {
-  static async getExpensesFromCSV(key: string, groupId: string): Promise<Expense[]> {
+  async getExpensesFromCSV(key: string, groupId: string): Promise<Expense[]> {
     const group = await GroupRepository.findOne({ relations: ["participants", "expenses"], where: { id: groupId } });
     const groupParticipants = group.participants;
 

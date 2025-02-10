@@ -1,4 +1,3 @@
-// src/repositories/user.repository.ts
 import { In, Repository } from "typeorm";
 import { User } from "../entity/User.entity";
 import { AppDataSource } from "../data-source";
@@ -14,7 +13,6 @@ export class UserRepository {
         return this.repository.find();
     }
 
-    // Expose repository methods
     async findById(id: string): Promise<User | null> {
         return this.repository.findOneBy({ id });
     }

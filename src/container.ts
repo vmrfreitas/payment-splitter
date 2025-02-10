@@ -11,6 +11,7 @@ import { SettlementService } from "./service/settlement.service";
 import { ExpenseController } from "./controller/expense.controller";
 import { ParticipantController } from "./controller/participant.controller";
 import { SettlementController } from "./controller/settlement.controller";
+import { S3Service } from "./service/s3.service";
 
 // Controllers
 container.register("UserController", { useClass: UserController });
@@ -26,6 +27,7 @@ container.register("GroupService", { useClass: GroupService });
 container.register("ParticipantService", { useClass: ParticipantService });
 container.register("SettlementService", { useClass: SettlementService });
 container.registerSingleton("EmailService", EmailService);
+container.registerSingleton("S3Service", S3Service);
 
 // Repositories
 container.registerSingleton("UserRepository", UserRepository);
