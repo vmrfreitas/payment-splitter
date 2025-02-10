@@ -9,6 +9,9 @@ export class User extends CommonEntity {
     id: string
 
     @Column()
+    email: string
+
+    @Column()
     name: string
 
     @OneToMany(() => Participant, (participant) => participant.user)

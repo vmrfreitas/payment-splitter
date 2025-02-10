@@ -4,6 +4,9 @@ import { GroupRepository } from "../repositories/group.repository";
 import { ExpenseRepository } from "../repositories/expense.repository";
 import { Participant } from "../entity/Participant.entity";
 import { ParticipantRepository } from "../repositories/participant.repository";
+import { EmailService } from "./email.service";
+import { UserRepository } from "../repositories/user.repository";
+import { In } from "typeorm";
 
 export class ExpenseService {
     static async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeeIds: string[]): Promise<Expense> {        
@@ -12,17 +15,20 @@ export class ExpenseService {
         const groupParticipants = group.participants;
         const payer = groupParticipants.find((participant) => participant.userId === payerId);
         const payees = groupParticipants.filter((participant) => payeeIds.includes(participant.userId));
-        const payerShare = 1;
-        const dividedAmount: number = Math.floor(+amount/(payees.length + payerShare)*100)/100;
-        const remainder = +amount - dividedAmount * (payees.length + payerShare);
+        const dividedAmount: number = Math.floor(+amount/(payees.length + 1)*100)/100;
+        const remainder = +amount - dividedAmount * (payees.length + 1);
+        const owedToPayer = +amount - (dividedAmount + remainder)
 
         const expense = this.buildExpense(group, payer, payees, description, +amount);
 
         for (const payee of payees ){
             payee.balance = Math.round((+payee.balance - dividedAmount)*100)/100;
         }
-        payer.balance = Math.round((+payer.balance + +amount - (dividedAmount + remainder))*100)/100; // TODO: document that the remainder always goes to the payer
+        payer.balance = Math.round((+payer.balance + owedToPayer)*100)/100; // TODO: document that the remainder always goes to the payer
 
+        const payerUser = await UserRepository.findOne({ where: {id: payerId} });
+        const payeeUsers = await UserRepository.find({ where: { id: In(payeeIds) } });
+        await EmailService.sendExpenseNotification(payerUser, payeeUsers, expense, dividedAmount + remainder, dividedAmount);
         await ParticipantRepository.save(payees.concat(payer));
         await ExpenseRepository.save(expense);
         return expense;

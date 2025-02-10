@@ -4,9 +4,10 @@ import { User } from "../entity/User.entity";
 
 export class UserService {
 
-    static async createUser(name: string) {
+    static async createUser(name: string, email: string) {
         const user = new User();
         user.name = name;
+        user.email = email;
         return await UserRepository.save(user);
     }
 

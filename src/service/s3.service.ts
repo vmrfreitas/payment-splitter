@@ -1,5 +1,5 @@
 // src/services/s3.service.ts
-import { S3Client, GetObjectCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import * as csv from "csv-parser";
 import { Expense } from "../entity/Expense.entity";

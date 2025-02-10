@@ -4,6 +4,8 @@ import { GroupRepository } from "../repositories/group.repository";
 import { SettlementRepository } from "../repositories/settlement.repository";
 import { Participant } from "../entity/Participant.entity";
 import { ParticipantRepository } from "../repositories/participant.repository";
+import { EmailService } from "./email.service";
+import { UserRepository } from "../repositories/user.repository";
 
 export class SettlementService {
     static async addOneSettlementToGroup(groupId: string, amount: number, payerId: string, payeeId: string): Promise<Settlement> {
@@ -17,6 +19,9 @@ export class SettlementService {
         payee.balance = Math.round((+payee.balance - +amount)*100)/100;
         payer.balance = Math.round((+payer.balance + +amount)*100)/100;
 
+        const payerUser = await UserRepository.findOne({ where: {id: payerId} });
+        const payeeUser = await UserRepository.findOne({ where: {id: payeeId} });
+        await EmailService.sendSettlementNotification(payerUser, payeeUser, amount, group.name);
         await ParticipantRepository.save([payee, payer]);
         await SettlementRepository.save(settlement);
         return settlement;

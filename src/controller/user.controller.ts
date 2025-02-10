@@ -1,12 +1,9 @@
 import { Request, Response } from 'express';
-import { UserRepository } from '../repositories/user.repository';
-import { User } from '../entity/User.entity';
-import { ParticipantRepository } from '../repositories/participant.repository';
 import { UserService } from '../service/user.service';
 
 export class UserController {
     static async createUser(req: Request, res: Response) {
-        const user = await UserService.createUser(req.body.name);
+        const user = await UserService.createUser(req.body.name, req.body.email);
         res.status(201).json({ message: "User created successfully", user });
     }
 

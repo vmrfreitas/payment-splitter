@@ -74,8 +74,8 @@ export class GroupService {
             return this.buildTransactions(expenses, settlements, users);
         }
 
-        private static buildTransactions(expenses: Expense[], settlements: Settlement[], users: User[]): Object{
-            let transactions = [];
+        private static buildTransactions(expenses: Expense[], settlements: Settlement[], users: User[]): object{
+            const transactions = [];
             for ( const expense of expenses ) {
                 transactions.push({
                     id: expense.id,

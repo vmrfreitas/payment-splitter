@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { ExpenseService } from '../service/expense.service';
 import { S3Service } from '../service/s3.service';
-import { ExpenseRepository } from '../repositories/expense.repository';
 
 export class ExpenseController { 
     static async getAllExpensesFromGroup(req: Request, res: Response) {
