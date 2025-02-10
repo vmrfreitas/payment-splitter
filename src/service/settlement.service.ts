@@ -27,7 +27,7 @@ export class SettlementService {
         const payeeUser = await this.userRepository.findById(payeeId);
         await this.emailService.sendSettlementNotification(payerUser, payeeUser, amount, group.name);
         await this.participantRepository.saveMany([payee, payer]);
-        await this.settlementRepository.save(settlement);
+        await this.settlementRepository.saveSingle(settlement);
         return settlement;
     }
 

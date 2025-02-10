@@ -10,7 +10,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class ExpenseService {
-    constructor(private userRepository: UserRepository, private emailService: EmailService, private participantRepository: ParticipantRepository) {}
+    constructor(private userRepository: UserRepository, private emailService: EmailService, private participantRepository: ParticipantRepository, private expenseRepository: ExpenseRepository) {}
 
     async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeeIds: string[]): Promise<Expense> {        
         
@@ -33,7 +33,7 @@ export class ExpenseService {
         const payeeUsers = await this.userRepository.findByIds(payeeIds);
         await this.emailService.sendExpenseNotification(payerUser, payeeUsers, expense, dividedAmount + remainder, dividedAmount);
         await this.participantRepository.saveMany(payees.concat(payer));
-        await ExpenseRepository.save(expense);
+        await this.expenseRepository.saveSingle(expense);
         return expense;
     }
 
@@ -43,7 +43,7 @@ export class ExpenseService {
     }
 
     async removeExpenseFromGroup(groupId: string, id: string) {
-        const expense = await ExpenseRepository.findOne({ relations:["payer", "payees"], where: { id } });
+        const expense = await this.expenseRepository.findOneByIdWithPayerAndPayees(id);
         const payer = expense.payer;
         const payees = expense.payees;
         const payerShare = 1;
@@ -56,7 +56,7 @@ export class ExpenseService {
         payer.balance = Math.round((+payer.balance - +expense.amount + (dividedAmount + remainder))*100)/100;
 
         await this.participantRepository.saveMany(payees.concat(payer));
-        await ExpenseRepository.remove(expense);
+        await this.expenseRepository.removeSingle(expense);
     }
 
     private buildExpense(group: Group, payer: Participant, payees: Participant[], description: string, amount: number): Expense {

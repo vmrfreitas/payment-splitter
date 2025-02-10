@@ -18,7 +18,7 @@ const s3Client = new S3Client({
 
 @injectable()
 export class S3Service {
-    constructor(private participantRepository: ParticipantRepository) { }
+    constructor(private participantRepository: ParticipantRepository, private expenseRepository: ExpenseRepository) { }
 
     async getExpensesFromCSV(key: string, groupId: string): Promise<Expense[]> {
         const group = await GroupRepository.findOne({ relations: ["participants", "expenses"], where: { id: groupId } });
@@ -61,7 +61,7 @@ export class S3Service {
                     .on("error", (error) => reject(error));
             });
             await this.participantRepository.saveMany(groupParticipants);
-            return await ExpenseRepository.save(expenses); //this will have to go to the expense service, which will use the s3 service to get the expenses
+            return await this.expenseRepository.saveMany(expenses); //this will have to go to the expense service, which will use the s3 service to get the expenses
         } catch (error) {
             console.error("S3 CSV Fetch Error:", error);
             throw new Error("Failed to fetch expenses from S3");

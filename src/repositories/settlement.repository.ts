@@ -9,11 +9,7 @@ export class SettlementRepository {
         this.repository = AppDataSource.getRepository(Settlement);
     }
 
-    async findOneByIdWithPayerAndPayee(id: string): Promise<Settlement | null>{ 
-        return await this.repository.findOne({ relations:["payer", "payee"], where: { id } })
-    }
-
-    async findByGroupIdWithPayerAndPayees(groupId: string): Promise<Settlement[] | null> {
+    async findByGroupIdWithPayerAndPayee(groupId: string): Promise<Settlement[] | null> {
         return await this.repository.createQueryBuilder("settlement")
             .leftJoinAndSelect("settlement.payer", "payer")
             .leftJoinAndSelect("settlement.payee", "payee")
@@ -21,7 +17,11 @@ export class SettlementRepository {
             .getMany();
     }
 
-    async save(settlement: Settlement): Promise<Settlement> {
+    async findOneByIdWithPayerAndPayee(id: string): Promise<Settlement | null> { 
+        return await this.repository.findOne({ relations:["payer", "payee"], where: { id } })
+    }
+
+    async saveSingle(settlement: Settlement): Promise<Settlement> {
         return await this.repository.save(settlement);
     }
 

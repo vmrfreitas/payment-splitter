@@ -12,7 +12,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class GroupService {
-    constructor(private userRepository: UserRepository, private settlementRepository: SettlementRepository, private participantRepository: ParticipantRepository) { }
+    constructor(private userRepository: UserRepository, private settlementRepository: SettlementRepository, private participantRepository: ParticipantRepository, private expenseRepository: ExpenseRepository) { }
 
     async createGroup(name: string, userIds: string[]) {
         const group = new Group()
@@ -53,20 +53,15 @@ export class GroupService {
         const participants = group.participants;
         const expenses = group.expenses;
         const settlements = group.settlements;
-        await ExpenseRepository.remove(expenses);
+        await this.expenseRepository.removeMany(expenses);
         await this.settlementRepository.removeMany(settlements);
         await this.participantRepository.removeMany(participants);
         await GroupRepository.remove(group);
     }
 
     async getTransactionHistory(groupId: string) {
-        const expenses = await ExpenseRepository.createQueryBuilder("expense")
-            .leftJoinAndSelect("expense.payer", "payer")
-            .leftJoinAndSelect("expense.payees", "payees")
-            .where("expense.groupId = :groupId", { groupId })
-            .getMany();
-
-        const settlements = await this.settlementRepository.findByGroupIdWithPayerAndPayees(groupId);
+        const expenses = await this.expenseRepository.findByGroupIdWithPayerAndPayees(groupId);
+        const settlements = await this.settlementRepository.findByGroupIdWithPayerAndPayee(groupId);
         const group = await GroupRepository.findOne({ relations: ["participants"], where: { id: groupId } });
         const users = await this.userRepository.findByIds(group.participants.map((participant) => participant.userId));
         return this.buildTransactions(expenses, settlements, users);

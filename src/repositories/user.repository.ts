@@ -9,12 +9,12 @@ export class UserRepository {
         this.repository = AppDataSource.getRepository(User);
     }
 
-    async findAll(): Promise<User[] | null> {
-        return this.repository.find();
-    }
-
     async findById(id: string): Promise<User | null> {
         return this.repository.findOneBy({ id });
+    }
+
+    async findAll(): Promise<User[] | null> {
+        return this.repository.find();
     }
 
     async findByIdWithParticipants(id: string): Promise<User | null> {

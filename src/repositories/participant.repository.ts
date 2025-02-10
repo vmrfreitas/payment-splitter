@@ -9,23 +9,23 @@ export class ParticipantRepository {
         this.repository = AppDataSource.getRepository(Participant);
     }
 
-    async findOneByUserIdAndGroupId(userId: string, groupId: string): Promise<Participant | null>{
-        return await this.repository.findOne({ where: { userId, groupId } });
-    }
-
-    async findByGroupId(groupId: string): Promise<Participant[] | null>{ 
+    async findByGroupId(groupId: string): Promise<Participant[] | null> { 
         return await this.repository.findBy({ groupId: groupId });
     }
 
-    async saveMany(participants: Participant[]): Promise<Participant[]>{
+    async findOneByUserIdAndGroupId(userId: string, groupId: string): Promise<Participant | null> {
+        return await this.repository.findOne({ where: { userId, groupId } });
+    }
+
+    async saveMany(participants: Participant[]): Promise<Participant[]> {
         return await this.repository.save(participants);
     }
 
-    async removeMany(participants: Participant[]): Promise<Participant[]>{
-        return await this.repository.remove(participants);
+    async removeSingle(participant: Participant): Promise<Participant> {
+        return await this.repository.remove(participant);
     }
 
-    async removeSingle(participant: Participant): Promise<Participant>{
-        return await this.repository.remove(participant);
+    async removeMany(participants: Participant[]): Promise<Participant[]> {
+        return await this.repository.remove(participants);
     }
 }
