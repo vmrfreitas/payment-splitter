@@ -10,11 +10,16 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class ExpenseService {
-    constructor(private userRepository: UserRepository, private emailService: EmailService, private participantRepository: ParticipantRepository, private expenseRepository: ExpenseRepository) {}
+    constructor(
+        private userRepository: UserRepository, 
+        private emailService: EmailService, 
+        private participantRepository: ParticipantRepository, 
+        private expenseRepository: ExpenseRepository, 
+        private groupRepository: GroupRepository) {}
 
     async addOneExpenseToGroup(groupId: string,  description: string, amount: number, payerId: string, payeeIds: string[]): Promise<Expense> {        
         
-        const group = await GroupRepository.findOne({ relations: ["expenses", "participants"], where: { id: groupId } });
+        const group = await this.groupRepository.findByIdWithExpensesAndParticipants(groupId);
         const groupParticipants = group.participants;
         const payer = groupParticipants.find((participant) => participant.userId === payerId);
         const payees = groupParticipants.filter((participant) => payeeIds.includes(participant.userId));
@@ -38,7 +43,7 @@ export class ExpenseService {
     }
 
     async getAllExpensesFromGroup(groupId: string): Promise<Expense[]> {
-        const group = await GroupRepository.findOne({ relations: ["expenses"], where: { id: groupId } });
+        const group = await this.groupRepository.findByIdWithExpenses(groupId);
         return group.expenses;
     }
 

@@ -15,6 +15,7 @@ import { S3Service } from "./service/s3.service";
 import { SettlementRepository } from "./repositories/settlement.repository";
 import { ParticipantRepository } from "./repositories/participant.repository";
 import { ExpenseRepository } from "./repositories/expense.repository";
+import { GroupRepository } from "./repositories/group.repository";
 
 // Controllers
 container.register("UserController", { useClass: UserController });
@@ -37,3 +38,4 @@ container.registerSingleton("UserRepository", UserRepository);
 container.registerSingleton("SettlementRepository", SettlementRepository);
 container.registerSingleton("ParticipantRepository", ParticipantRepository);
 container.registerSingleton("ExpenseRepository", ExpenseRepository);
+container.registerSingleton("GroupRepository", GroupRepository);
