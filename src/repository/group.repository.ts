@@ -1,12 +1,11 @@
-import { Repository } from "typeorm";
-import { AppDataSource } from "../data-source";
+import { DataSource, Repository } from "typeorm";
 import { Group } from "../entity/Group.entity";
 
 export class GroupRepository {
     private repository: Repository<Group>;
 
-    constructor() {
-        this.repository = AppDataSource.getRepository(Group);
+    constructor(private datasource: DataSource) {
+        this.repository = datasource.getRepository(Group);
     }
 
     async findAllWithParticipants(): Promise<Group[] | null> {

@@ -1,12 +1,11 @@
-import { Repository } from "typeorm";
-import { AppDataSource } from "../data-source";
+import { DataSource, Repository } from "typeorm";
 import { Expense } from "../entity/Expense.entity";
 
 export class ExpenseRepository {
     private repository: Repository<Expense>;
 
-    constructor() {
-        this.repository = AppDataSource.getRepository(Expense);
+    constructor(private datasource: DataSource) {
+        this.repository = datasource.getRepository(Expense);
     }
 
     async findByGroupIdWithPayerAndPayees(groupId: string): Promise<Expense[] | null> {

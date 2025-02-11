@@ -1,12 +1,13 @@
-import { In, Repository } from "typeorm";
+import { DataSource, In, Repository } from "typeorm";
 import { User } from "../entity/User.entity";
-import { AppDataSource } from "../data-source";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class UserRepository {
     private repository: Repository<User>;
 
-    constructor() {
-        this.repository = AppDataSource.getRepository(User);
+    constructor(private datasource: DataSource) {
+        this.repository = datasource.getRepository(User);
     }
 
     async findById(id: string): Promise<User | null> {

@@ -1,5 +1,5 @@
-import { UserRepository } from "../repositories/user.repository";
-import { ParticipantRepository } from "../repositories/participant.repository";
+import { UserRepository } from "../repository/user.repository";
+import { ParticipantRepository } from "../repository/participant.repository";
 import { User } from "../entity/User.entity";
 import { injectable } from "tsyringe";
 

@@ -1,9 +1,9 @@
 import { Participant } from "../entity/Participant.entity";
 import { User } from "../entity/User.entity";
 import { Group } from "../entity/Group.entity";
-import { GroupRepository } from "../repositories/group.repository";
-import { UserRepository } from "../repositories/user.repository";
-import { ParticipantRepository } from "../repositories/participant.repository";
+import { GroupRepository } from "../repository/group.repository";
+import { UserRepository } from "../repository/user.repository";
+import { ParticipantRepository } from "../repository/participant.repository";
 import { injectable } from "tsyringe";
 
 @injectable()

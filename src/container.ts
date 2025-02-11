@@ -5,18 +5,20 @@ import { GroupController } from "./controller/group.controller";
 import { GroupService } from "./service/group.service";
 import { ParticipantService } from "./service/participant.service";
 import { EmailService } from "./service/email.service";
-import { UserRepository } from "./repositories/user.repository";
+import { UserRepository } from "./repository/user.repository";
 import { ExpenseService } from "./service/expense.service";
 import { SettlementService } from "./service/settlement.service";
 import { ExpenseController } from "./controller/expense.controller";
 import { ParticipantController } from "./controller/participant.controller";
 import { SettlementController } from "./controller/settlement.controller";
 import { S3Service } from "./service/s3.service";
-import { SettlementRepository } from "./repositories/settlement.repository";
-import { ParticipantRepository } from "./repositories/participant.repository";
-import { ExpenseRepository } from "./repositories/expense.repository";
-import { GroupRepository } from "./repositories/group.repository";
+import { SettlementRepository } from "./repository/settlement.repository";
+import { ParticipantRepository } from "./repository/participant.repository";
+import { ExpenseRepository } from "./repository/expense.repository";
+import { GroupRepository } from "./repository/group.repository";
 import { ExpenseCalculator } from "./util/expense.calculator";
+import { DataSource } from "typeorm";
+import { AppDataSource } from "./data-source";
 
 // Controllers
 container.register("UserController", { useClass: UserController });
@@ -35,11 +37,27 @@ container.registerSingleton("EmailService", EmailService);
 container.registerSingleton("S3Service", S3Service);
 
 // Repositories
-container.registerSingleton("UserRepository", UserRepository);
-container.registerSingleton("SettlementRepository", SettlementRepository);
-container.registerSingleton("ParticipantRepository", ParticipantRepository);
-container.registerSingleton("ExpenseRepository", ExpenseRepository);
-container.registerSingleton("GroupRepository", GroupRepository);
+container.registerInstance(DataSource, AppDataSource);
+container.register(UserRepository, {
+    useFactory: () => new UserRepository(container.resolve(DataSource))
+  });
+  container.register(SettlementRepository, {
+    useFactory: () => new SettlementRepository(container.resolve(DataSource))
+  });
+  container.register(ParticipantRepository, {
+    useFactory: () => new ParticipantRepository(container.resolve(DataSource))
+  });
+  container.register(ExpenseRepository, {
+    useFactory: () => new ExpenseRepository(container.resolve(DataSource))
+  });
+  container.register(GroupRepository, {
+    useFactory: () => new GroupRepository(container.resolve(DataSource))
+  });
+// container.registerSingleton("SettlementRepository", SettlementRepository);
+// container.registerSingleton("ParticipantRepository", ParticipantRepository);
+// container.registerSingleton("ExpenseRepository", ExpenseRepository);
+// container.registerSingleton("GroupRepository", GroupRepository);
+
 
 // Utils
 container.registerSingleton("ExpenseCalculator", ExpenseCalculator);

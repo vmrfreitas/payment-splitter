@@ -1,11 +1,11 @@
 import { Expense } from "../entity/Expense.entity";
 import { Group } from "../entity/Group.entity";
-import { GroupRepository } from "../repositories/group.repository";
-import { ExpenseRepository } from "../repositories/expense.repository";
+import { GroupRepository } from "../repository/group.repository";
+import { ExpenseRepository } from "../repository/expense.repository";
 import { Participant } from "../entity/Participant.entity";
-import { ParticipantRepository } from "../repositories/participant.repository";
+import { ParticipantRepository } from "../repository/participant.repository";
 import { EmailService } from "./email.service";
-import { UserRepository } from "../repositories/user.repository";
+import { UserRepository } from "../repository/user.repository";
 import { injectable } from "tsyringe";
 import { ExpenseCalculator } from "../util/expense.calculator";
 import { S3Service } from "./s3.service";

@@ -1,13 +1,13 @@
 import { Participant } from "../entity/Participant.entity";
 import { Group } from "../entity/Group.entity";
-import { GroupRepository } from "../repositories/group.repository";
-import { UserRepository } from "../repositories/user.repository";
-import { ParticipantRepository } from "../repositories/participant.repository";
+import { GroupRepository } from "../repository/group.repository";
+import { UserRepository } from "../repository/user.repository";
+import { ParticipantRepository } from "../repository/participant.repository";
 import { Expense } from "../entity/Expense.entity";
 import { Settlement } from "../entity/Settlement.entity";
 import { User } from "../entity/User.entity";
-import { ExpenseRepository } from "../repositories/expense.repository";
-import { SettlementRepository } from "../repositories/settlement.repository";
+import { ExpenseRepository } from "../repository/expense.repository";
+import { SettlementRepository } from "../repository/settlement.repository";
 import { injectable } from "tsyringe";
 
 @injectable()
