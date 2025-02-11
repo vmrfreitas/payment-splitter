@@ -43,4 +43,22 @@ export class ExpenseCalculator {
 
     payer.balance = Number((+payer.balance - owedToPayer).toFixed(2));
   }
+
+  calculateSettlementBalances(
+    payer: Participant,
+    payee: Participant,
+    amount: number
+  ): void {
+    payer.balance = Number((+payer.balance + +amount).toFixed(2));
+    payee.balance = Number((+payee.balance - +amount).toFixed(2));
+  }
+
+  reverseSettlementBalances(
+    payer: Participant,
+    payee: Participant,
+    amount: number
+  ): void {
+    payer.balance = Number((+payer.balance - +amount).toFixed(2));
+    payee.balance = Number((+payee.balance + +amount).toFixed(2));
+  }
 }

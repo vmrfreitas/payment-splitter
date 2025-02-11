@@ -7,6 +7,7 @@ import { ParticipantRepository } from "../repositories/participant.repository";
 import { EmailService } from "./email.service";
 import { UserRepository } from "../repositories/user.repository";
 import { injectable } from "tsyringe";
+import { ExpenseCalculator } from "../util/expense.calculator";
 
 @injectable()
 export class SettlementService {
@@ -15,9 +16,15 @@ export class SettlementService {
         private emailService: EmailService, 
         private settlementRepository: SettlementRepository, 
         private participantRepository: ParticipantRepository,
-        private groupRepository: GroupRepository) {}
+        private groupRepository: GroupRepository,
+        private expenseCalculator: ExpenseCalculator) {}
 
-    async addOneSettlementToGroup(groupId: string, amount: number, payerId: string, payeeId: string): Promise<Settlement> {
+    async addOneSettlementToGroup(
+        groupId: string, 
+        amount: number, 
+        payerId: string, 
+        payeeId: string
+    ): Promise<Settlement> {
         const group = await this.groupRepository.findByIdWithParticipantsAndSettlements(groupId);
         const groupParticipants = group.participants;
         const payer = groupParticipants.find((participant) => participant.userId === payerId);
@@ -25,15 +32,13 @@ export class SettlementService {
 
         const settlement = this.buildSettlement(group, payer, payee, amount);
 
-        payee.balance = Math.round((+payee.balance - +amount)*100)/100;
-        payer.balance = Math.round((+payer.balance + +amount)*100)/100;
+        this.expenseCalculator.calculateSettlementBalances(payer, payee, amount);
 
         const payerUser = await this.userRepository.findById(payerId);
         const payeeUser = await this.userRepository.findById(payeeId);
         await this.emailService.sendSettlementNotification(payerUser, payeeUser, amount, group.name);
         await this.participantRepository.saveMany([payee, payer]);
-        await this.settlementRepository.saveSingle(settlement);
-        return settlement;
+        return await this.settlementRepository.saveSingle(settlement);
     }
 
     async getAllSettlementsFromGroup(groupId: string): Promise<Settlement[]> {
@@ -46,8 +51,7 @@ export class SettlementService {
         const payer = settlement.payer;
         const payee = settlement.payee;
 
-        payee.balance =  Math.round((+payee.balance + +settlement.amount)*100)/100;
-        payer.balance = Math.round((+payer.balance - +settlement.amount)*100)/100;
+        this.expenseCalculator.reverseSettlementBalances(payer, payee, settlement.amount);
 
         await this.participantRepository.saveMany([payee, payer]);
         await this.settlementRepository.removeSingle(settlement);

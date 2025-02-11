@@ -40,4 +40,6 @@ container.registerSingleton("SettlementRepository", SettlementRepository);
 container.registerSingleton("ParticipantRepository", ParticipantRepository);
 container.registerSingleton("ExpenseRepository", ExpenseRepository);
 container.registerSingleton("GroupRepository", GroupRepository);
+
+// Utils
 container.registerSingleton("ExpenseCalculator", ExpenseCalculator);

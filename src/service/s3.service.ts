@@ -40,12 +40,19 @@ export class S3Service {
                         expense.group = group;
                         
                         const payer = participants.find(p => p.userId === data.payerId);
-                        const payees = participants.filter(p => data.payeeIds.split(";").includes(p.userId));
+                        let payees: Participant[];
+
+                        if ( data.payeeIds !== undefined ) { 
+                            payees = participants.filter(p => data.payeeIds.split(";").includes(p.userId));
+                        } else {
+                            payees = participants.filter(p => p.userId !== data.payerId);
+                        }
+
                         expense.payer = payer;
                         expense.payees = payees;
                         
-                        if (!payer || payees.length === 0) {
-                            throw new Error("Invalid participant data in CSV row");
+                        if (!payer) {
+                            throw new Error("Invalid payer data in CSV row");
                         }
 
                         expense.calculationMetadata =  this.expenseCalculator.calculateSplit(
