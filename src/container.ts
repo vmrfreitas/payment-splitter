@@ -29,7 +29,7 @@ container.register("SettlementController", { useClass: SettlementController });
 
 // Services
 container.register("UserService", { useClass: UserService });
-container.register("ExpenseService", {useClass: ExpenseService});
+container.register("ExpenseService", { useClass: ExpenseService });
 container.register("GroupService", { useClass: GroupService });
 container.register("ParticipantService", { useClass: ParticipantService });
 container.register("SettlementService", { useClass: SettlementService });
@@ -40,24 +40,19 @@ container.registerSingleton("S3Service", S3Service);
 container.registerInstance(DataSource, AppDataSource);
 container.register(UserRepository, {
     useFactory: () => new UserRepository(container.resolve(DataSource))
-  });
-  container.register(SettlementRepository, {
+});
+container.register(SettlementRepository, {
     useFactory: () => new SettlementRepository(container.resolve(DataSource))
-  });
-  container.register(ParticipantRepository, {
+});
+container.register(ParticipantRepository, {
     useFactory: () => new ParticipantRepository(container.resolve(DataSource))
-  });
-  container.register(ExpenseRepository, {
+});
+container.register(ExpenseRepository, {
     useFactory: () => new ExpenseRepository(container.resolve(DataSource))
-  });
-  container.register(GroupRepository, {
+});
+container.register(GroupRepository, {
     useFactory: () => new GroupRepository(container.resolve(DataSource))
-  });
-// container.registerSingleton("SettlementRepository", SettlementRepository);
-// container.registerSingleton("ParticipantRepository", ParticipantRepository);
-// container.registerSingleton("ExpenseRepository", ExpenseRepository);
-// container.registerSingleton("GroupRepository", GroupRepository);
-
+});
 
 // Utils
 container.registerSingleton("ExpenseCalculator", ExpenseCalculator);

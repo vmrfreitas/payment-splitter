@@ -24,7 +24,6 @@ export class ExpenseRepository {
         return await this.repository.save(expense);
     }
 
-
     async saveMany(expenses: Expense[]): Promise<Expense[]> {
         return await this.repository.save(expenses);
     }
