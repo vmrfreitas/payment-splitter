@@ -1,12 +1,11 @@
-// src/services/s3.service.ts
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import * as csv from "csv-parser";
 import { Expense } from "../entity/Expense.entity";
-import { GroupRepository } from "../repositories/group.repository";
-import { ExpenseRepository } from "../repositories/expense.repository";
-import { ParticipantRepository } from "../repositories/participant.repository";
+import { Group } from "../entity/Group.entity";
+import { Participant } from "../entity/Participant.entity";
 import { injectable } from "tsyringe";
+import { ExpenseCalculator } from "../util/expense.calculator";
 
 const s3Client = new S3Client({
     region: process.env.AWS_REGION,
@@ -18,12 +17,9 @@ const s3Client = new S3Client({
 
 @injectable()
 export class S3Service {
-    constructor(private participantRepository: ParticipantRepository, private expenseRepository: ExpenseRepository, private groupRepository: GroupRepository) { }
+    constructor(private expenseCalculator: ExpenseCalculator) {}
 
-    async getExpensesFromCSV(key: string, groupId: string): Promise<Expense[]> {
-        const group = await this.groupRepository.findByIdWithExpensesAndParticipants(groupId);
-        const groupParticipants = group.participants;
-
+    async getExpensesFromCSV(key: string, group: Group, participants: Participant[]): Promise<Expense[]> {
         try {
             const command = new GetObjectCommand({
                 Bucket: process.env.S3_BUCKET_NAME,
@@ -33,7 +29,7 @@ export class S3Service {
             const response = await s3Client.send(command);
             const stream = response.Body as Readable;
 
-            const expenses: Expense[] = await new Promise((resolve, reject) => {
+            return await new Promise((resolve, reject) => {
                 const expenses: Expense[] = [];
                 stream
                     .pipe(csv())
@@ -42,26 +38,26 @@ export class S3Service {
                         expense.description = data.description;
                         expense.amount = parseFloat(data.amount);
                         expense.group = group;
-                        expense.payer = groupParticipants.find((participant) => participant.userId === data.payerId);
-                        const payeeIds = data.payeeIds.split(";");
-                        expense.payees = groupParticipants.filter((participant) => payeeIds.includes(participant.userId));
-
-                        const payerShare = 1;
-                        const dividedAmount: number = Math.floor(expense.amount / (expense.payees.length + payerShare) * 100) / 100;
-                        const remainder = +expense.amount - dividedAmount * (expense.payees.length + payerShare);
-                        for (const payee of expense.payees) {
-                            payee.balance = Math.round((+payee.balance - dividedAmount) * 100) / 100;
+                        
+                        const payer = participants.find(p => p.userId === data.payerId);
+                        const payees = participants.filter(p => data.payeeIds.split(";").includes(p.userId));
+                        expense.payer = payer;
+                        expense.payees = payees;
+                        
+                        if (!payer || payees.length === 0) {
+                            throw new Error("Invalid participant data in CSV row");
                         }
-                        expense.payer.balance = Math.round((+expense.payer.balance + +expense.amount - (dividedAmount + remainder)) * 100) / 100;
 
+                        expense.calculationMetadata =  this.expenseCalculator.calculateSplit(
+                                expense.amount,
+                                payees.length + 1
+                            );
 
                         expenses.push(expense);
                     })
                     .on("end", () => resolve(expenses))
                     .on("error", (error) => reject(error));
             });
-            await this.participantRepository.saveMany(groupParticipants);
-            return await this.expenseRepository.saveMany(expenses); //this will have to go to the expense service, which will use the s3 service to get the expenses
         } catch (error) {
             console.error("S3 CSV Fetch Error:", error);
             throw new Error("Failed to fetch expenses from S3");

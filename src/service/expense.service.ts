@@ -8,6 +8,7 @@ import { EmailService } from "./email.service";
 import { UserRepository } from "../repositories/user.repository";
 import { injectable } from "tsyringe";
 import { ExpenseCalculator } from "../util/expense.calculator";
+import { S3Service } from "./s3.service";
 
 @injectable()
 export class ExpenseService {
@@ -17,7 +18,8 @@ export class ExpenseService {
         private participantRepository: ParticipantRepository,
         private expenseRepository: ExpenseRepository,
         private groupRepository: GroupRepository,
-        private expenseCalculator: ExpenseCalculator) { }
+        private expenseCalculator: ExpenseCalculator,
+        private s3Service: S3Service) { }
 
     async addOneExpenseToGroup(groupId: string, description: string, amount: number, payerId: string, payeeIds: string[]): Promise<Expense> {
         const group = await this.groupRepository.findByIdWithExpensesAndParticipants(groupId);
@@ -52,6 +54,30 @@ export class ExpenseService {
         await this.participantRepository.saveMany(payees.concat(payer));
         await this.expenseRepository.saveSingle(expense);
         return expense;
+    }
+
+    
+    async importExpensesFromS3(key: string, groupId: string) {
+        const group = await this.groupRepository.findByIdWithParticipants(groupId);
+        const participants = group.participants;
+
+        const rawExpenses = await this.s3Service.getExpensesFromCSV(key, group, participants);
+
+        for (const expense of rawExpenses) {
+            const { dividedAmount, remainder } = expense.calculationMetadata;
+
+            this.expenseCalculator.calculateBalancesOnAdd(
+                expense.payer,
+                expense.payees,
+                expense.amount,
+                dividedAmount,
+                remainder
+            );
+        }
+
+        await this.participantRepository.saveMany(participants);
+        await this.expenseRepository.saveMany(rawExpenses);
+        return rawExpenses;
     }
 
     async getAllExpensesFromGroup(groupId: string): Promise<Expense[]> {

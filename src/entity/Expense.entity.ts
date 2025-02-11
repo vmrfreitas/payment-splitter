@@ -25,4 +25,8 @@ export class Expense extends CommonEntity {
     @JoinTable()
     payees: Participant[]
     
+    calculationMetadata: {
+        dividedAmount: number;
+        remainder: number;
+    }
 }

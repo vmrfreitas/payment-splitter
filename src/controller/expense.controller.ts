@@ -16,7 +16,7 @@ export class ExpenseController {
         try {
           const { key } = req.body;
         
-          const expenses = await this.s3Service.getExpensesFromCSV(key, req.params.groupId);
+          const expenses = await this.expenseService.importExpensesFromS3(key, req.params.groupId);
                     
           res.status(200).json({ message: "Expenses imported successfully", expenses });
         } catch (error) {
