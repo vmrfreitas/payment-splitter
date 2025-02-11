@@ -1,4 +1,3 @@
-// entities/Participant.entity.ts
 import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from "typeorm";
 import { User } from "./User.entity";
 import { Group } from "./Group.entity";

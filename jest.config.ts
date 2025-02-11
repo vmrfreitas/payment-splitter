@@ -6,7 +6,7 @@ const config: Config = {
   setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"],
   testMatch: ["**/__tests__/**/*.test.ts"],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1", // Adjust for your alias setup
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
   testPathIgnorePatterns: ["/node_modules/", "/src/server.ts"]
 };
