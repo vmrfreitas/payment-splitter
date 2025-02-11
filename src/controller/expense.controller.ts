@@ -32,7 +32,7 @@ export class ExpenseController {
     }
 
     async removeExpenseFromGroup(req: Request, res: Response) {
-        this.expenseService.removeExpenseFromGroup(req.params.groupId, req.params.id);
+        this.expenseService.removeExpenseFromGroup(req.params.id);
         res.status(200).json({ message: "Expense removed successfully" });
     }
 }

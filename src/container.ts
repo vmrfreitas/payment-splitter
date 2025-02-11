@@ -16,6 +16,7 @@ import { SettlementRepository } from "./repositories/settlement.repository";
 import { ParticipantRepository } from "./repositories/participant.repository";
 import { ExpenseRepository } from "./repositories/expense.repository";
 import { GroupRepository } from "./repositories/group.repository";
+import { ExpenseCalculator } from "./util/expense.calculator";
 
 // Controllers
 container.register("UserController", { useClass: UserController });
@@ -39,3 +40,4 @@ container.registerSingleton("SettlementRepository", SettlementRepository);
 container.registerSingleton("ParticipantRepository", ParticipantRepository);
 container.registerSingleton("ExpenseRepository", ExpenseRepository);
 container.registerSingleton("GroupRepository", GroupRepository);
+container.registerSingleton("ExpenseCalculator", ExpenseCalculator);
