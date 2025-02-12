@@ -83,14 +83,6 @@ About the data model:
 
 ## API Endpoints
 
-*   **Endpoint:** (e.g., `POST /groups`)
-*   **Method:** (e.g., `POST`, `GET`, `PUT`, `DELETE`)
-*   **Description:** (e.g., "Creates a new group.")
-*   **Request Body (if applicable):** (Briefly describe the expected request body format and important fields. You can link to a more detailed schema if needed, but for a simple README, concise is better.)
-*   **Response Body (if applicable):** (Briefly describe the response body and important fields.  Again, keep it concise.)
-
-**Example Endpoint Table:**
-
 Swapped some of the information for `...` for the sake of brevity.
 
 | Endpoint          | Method | Description                     | Request Body (Example)                               | Response Body (Example)                                  |
