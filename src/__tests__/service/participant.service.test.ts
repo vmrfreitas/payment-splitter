@@ -67,7 +67,7 @@ describe('ParticipantService', () => {
             const groupId = 'group-id';
             const userIds = ['user-id-1', 'non-existent-user-id'];
             groupRepositoryMock.findByIdWithParticipants.mockResolvedValue(new Group());
-            userRepositoryMock.findByIds.mockResolvedValue([new User()]); // Only one user found
+            userRepositoryMock.findByIds.mockResolvedValue([new User()]);
 
             await expect(participantService.addParticipantsToGroup(groupId, userIds)).rejects.toThrow("Group or users not found");
 

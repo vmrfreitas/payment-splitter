@@ -12,7 +12,8 @@
       "start": "ts-node src/server.ts",
       "typeorm": "typeorm-ts-node-commonjs",
       "migration": " npm run typeorm migration:run -- -d ./src/data-source.ts",
-      "lint": "eslint ."
+      "lint": "eslint .",
+      "test": "npx jest"
    },
    "keywords": [],
    "author": "",

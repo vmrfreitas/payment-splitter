@@ -21,10 +21,12 @@ HTTP requests are made to the server. Routers sends them to controllers. Control
 \
 About the data model:
 - **Users**: contain personal information.
-- **Participant**: is the combination of a Group with a User. This means that a User can be in multiple groups, but it's balance is tracked by the Participant entity. 
+- **Participant**: is the combination of a Group with a User. This means that a User can be in multiple groups, but it's balance is tracked by the Participant entity.
+    - A positive balance means that money is owed to the participant, a negative balance means the participant owes money.
 - **Group**: contains the participants and all the expenses and settlements.
 - **Expense**: has an amount, one payer and multiple payees, which are Participants.
-- **Settlement**: contains an amount, one payer and one payee, which are Participants.  
+    - The expenses are divided by the user + every payee. In case of divisions with remainder, the payer is responsible for it.
+- **Settlement**: contains an amount, one payer and one payee, which are Participants.
 
 ## Assumptions and Limitations (also a future-works list)
 
