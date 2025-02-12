@@ -45,8 +45,6 @@ About the data model:
 
 ## Getting Started
 
-[**Provide simple instructions on how to run the API locally.**  This should be straightforward for someone to quickly set up and test your API. Examples:]
-
 1.  **Prerequisites:**
     *   Node.js (I have v20.15.0 )
     *   npm (I have v10.7.0)
@@ -84,8 +82,6 @@ About the data model:
     *   The API will be running at `http://localhost:3000` (or the port you configured).
 
 ## API Endpoints
-
-[**List the available endpoints with a brief description of each.**  Focus on clarity and conciseness.  A table format can be very effective.  For each endpoint, include:]
 
 *   **Endpoint:** (e.g., `POST /groups`)
 *   **Method:** (e.g., `POST`, `GET`, `PUT`, `DELETE`)
