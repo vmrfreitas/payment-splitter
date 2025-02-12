@@ -29,10 +29,6 @@ export class ParticipantService {
         return await this.participantRepository.findByGroupId(groupId);
     }
 
-    async updateParticipantsBalance() {
-        
-    }
-
     async removeParticipantFromGroup(groupId: string, userId: string) {
         const participant = await this.participantRepository.findOneByUserIdAndGroupId(userId, groupId);
         await this.participantRepository.removeSingle(participant);

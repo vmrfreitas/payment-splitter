@@ -22,8 +22,9 @@ export class UserRepository {
         return this.repository.findOne({ relations: ["participants"], where: { id } });
     }
 
-    async findByIds(ids: string[]): Promise<User[] | null> {
-        return this.repository.find({ where: { id: In(ids) } })
+    async findByIds(ids: string[]): Promise<User[]> {
+        const users = await this.repository.find({ where: { id: In(ids) } });
+        return users || [];
     }
 
     async saveSingle(user: User): Promise<User> {
