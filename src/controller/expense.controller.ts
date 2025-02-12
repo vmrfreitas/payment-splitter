@@ -28,7 +28,7 @@ export class ExpenseController {
     async addOneExpenseToGroup(req: Request, res: Response) {
         const { description, amount, payerId, payeeIds } = req.body; 
         const expense = await this.expenseService.addOneExpenseToGroup(req.params.groupId, description, amount, payerId, payeeIds);         
-        res.status(201).json({ message: "Expenses added successfully", expense }); 
+        res.status(201).json({ message: "Expense added successfully", expense }); 
     }
 
     async removeExpenseFromGroup(req: Request, res: Response) {

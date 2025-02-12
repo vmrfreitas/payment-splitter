@@ -23,6 +23,10 @@ export class GroupService {
         const group = new Group()
         group.name = name;
         await this.groupRepository.saveSingle(group);
+        
+        if (!Array.isArray(userIds) || userIds.length == 0){
+           return group;
+        }
 
         const users = await this.userRepository.findByIds(userIds);
 

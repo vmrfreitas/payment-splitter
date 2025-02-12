@@ -14,7 +14,7 @@ export class SettlementController {
     async addOneSettlementToGroup(req: Request, res: Response) {
         const { amount, payerId, payeeId } = req.body; 
         const settlements = await this.settlementService.addOneSettlementToGroup(req.params.groupId, amount, payerId, payeeId);         
-        res.status(201).json({ message: "Settlements added successfully", settlements }); 
+        res.status(201).json({ message: "Settlement added successfully", settlements }); 
     }
 
     async removeSettlementFromGroup(req: Request, res: Response) {
