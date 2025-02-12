@@ -57,7 +57,7 @@ export class ExpenseService {
     }
 
     
-    async importExpensesFromS3(key: string, groupId: string) {
+    async importExpensesFromS3(key: string, groupId: string): Promise<Expense[]> {
         const group = await this.groupRepository.findByIdWithParticipants(groupId);
         const participants = group.participants;
 
