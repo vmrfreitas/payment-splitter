@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 
 @injectable()
 export class EmailService {
-    async sendEmail(to: string, subject: string, html: string) {
+    private async sendEmail(to: string, subject: string, html: string) {
         try {
             await transporter.sendMail({
                 from: `Payment Splitter App <paymentsplitterapp@gmail.com>`,

@@ -31,6 +31,7 @@ describe("SettlementRepository", () => {
 
     beforeEach(async () => {
         await testDataSource.getRepository(Settlement).clear();
+        await testDataSource.getRepository(Group).clear();
     });
 
     describe("saveSingle", () => {

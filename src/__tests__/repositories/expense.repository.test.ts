@@ -31,6 +31,7 @@ describe("ExpenseRepository", () => {
 
     beforeEach(async () => {
         await testDataSource.getRepository(Expense).clear();
+        await testDataSource.getRepository(Group).clear();
     });
 
     describe("saveSingle", () => {
