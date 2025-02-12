@@ -107,7 +107,7 @@ Swapped some of the information for `...` for the sake of brevity.
 | `/groups/{groupId}/settlements` | POST | Add settlement to a group | `{ "amount": "100", "payerId": "id", "payeeId": "id2" }` | `{"message": "Settlement added successfully", "settlements": { "amount": 100.00, "payer": { "userId": "id", "groupId": "...", "balance": 0 }, "payee": { "userId": ... } } }`  |
 | `/groups/{groupId}/settlements/{settlementId}` | DELETE | Remove settlement from a group | None | ``{ "message": "Settlement removed successfully" }`` |
 
-[**Add more endpoints following the same format.** Cover the main functionalities of your API.]
+
 
 ## Hoppscotch/Postman Collection
 
